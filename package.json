@@ -1,0 +1,25 @@
+{
+  "name": "orve-cli",
+  "version": "1.0.0",
+  "description": "cli for create template orve",
+  "main": "index.js",
+  "scripts": {
+    "create": "node index.js create"
+  },
+  "keywords": [],
+  "author": "Destrokhen <armagiddon19@gmail.com>",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.2",
+    "commander": "^10.0.0",
+    "fs-extra": "^11.1.1",
+    "node-async-exec": "^1.2.0",
+    "package-name-regex": "^2.0.6"
+  },
+  "bin": {
+    "orve": "index.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}
