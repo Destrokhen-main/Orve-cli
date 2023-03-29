@@ -6,7 +6,7 @@
   "scripts": {
     "create": "node index.js create"
   },
-  "keywords": [],
+  "keywords": ["orve", "cli"],
   "author": "Destrokhen <armagiddon19@gmail.com>",
   "license": "ISC",
   "dependencies": {
