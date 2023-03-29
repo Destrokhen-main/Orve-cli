@@ -1,12 +1,15 @@
 {
   "name": "orve-cli",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "cli for create template orve",
   "main": "index.js",
   "scripts": {
     "create": "node index.js create"
   },
-  "keywords": ["orve", "cli"],
+  "keywords": [
+    "orve",
+    "cli"
+  ],
   "author": "Destrokhen <armagiddon19@gmail.com>",
   "license": "ISC",
   "dependencies": {
