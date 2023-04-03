@@ -14,6 +14,13 @@ ____
 orve create <name folder>
 ```
 
+If you want to build a project based on Vite
+
+```
+orve create <name folder> --vite
+```
+
+
 <a target="_blank" href="https://github.com/Destrokhen-main/Orve-npm">NPM package</a>
 
 <a target="_blank" href="https://github.com/Destrokhen-main/simple-reactive-cli">Webpack project (On the basis of it the project is going)</a>
