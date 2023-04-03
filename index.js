@@ -16,6 +16,13 @@ function writeFileByURLs(filesPath, appName, url) {
   });
 }
 
+function writeFileByURLsVite(filesPath, appName, url) {
+  const file = fs.createWriteStream(`${filesPath}/${appName}/${url}`);
+  const request = http.get("https://raw.githubusercontent.com/Destrokhen-main/vite-orve-template/main/" + url, function(response) {
+    response.pipe(file);
+  });
+}
+
 function centerLogger(text) {
   console.log(`
   \n
@@ -44,14 +51,146 @@ function loader(text = "loading") {
   }
 }
 
+
+async function viteForm(filesPath, appName) {
+  await exec({
+    path: `${filesPath}/${appName}`,
+    cmd: [
+      `npm init -y`,
+      `npm pkg set 'description'='Template Orve', 'main'='main.js' 'scripts.dev'='vite' 'scripts.build'='vite build' 'scripts.preview'='vite preview'`,
+      `npm pkg delete 'scripts.test'`
+    ]
+  }).catch((e) => {if (e) throw e;});
+
+  const disabled = loader(" Installing Dependencies ");
+
+  await exec(
+    {
+      path: `${filesPath}/${appName}`,
+      cmd: [
+        "npm i -D vite",
+        "npm i -D sass",
+        "npm i orve"
+      ]
+    }
+  ).catch((e) => { if (e) throw e;});
+
+  await disabled();
+
+  await exec({
+    path: `${filesPath}/${appName}`,
+    cmd: [
+      "mkdir src",
+      "mkdir src/assets",
+      "mkdir src/assets/font",
+
+      "mkdir src/component",
+    ]
+  }).catch((e) => { if (e) throw e;});
+
+  console.clear();
+  logger(`--- ${chalk.bgWhite.bold(` Copy file from repository `)} ---`);
+
+  const pathArray = [
+    "index.html",
+    "main.js",
+    ".gitignore",
+    "vite.config.js",
+    
+    "src/style.scss",
+    "src/app.jsx",
+    "src/assets/logo.png",
+    "src/assets/font/font.scss",
+    "src/assets/font/Montserrat-Italic-VariableFont_wght.ttf",
+    "src/assets/font/Montserrat-VariableFont_wght.ttf",
+    "src/component/helloword.jsx",
+  ];
+
+  for(let i = 0 ; i !== pathArray.length; i++) {
+    logger(`--- ${chalk.bgWhite.bold(` Downloading the file : ${chalk.bgYellow.bold(` ${pathArray[i]} `)}`)} ---`);
+    writeFileByURLsVite(filesPath, appName, pathArray[i]);
+  }
+}
+
+async function webpackForm(filesPath, appName) {
+  await exec({
+    path: `${filesPath}/${appName}`,
+    cmd: [
+      `npm init -y`,
+      `npm pkg set 'description'='Template Orve', 'main'='scr/index.js' 'scripts.dev'='webpack serve --mode development' 'scripts.build'='webpack --mode production'`,
+      `npm pkg delete 'scripts.test'`
+    ]
+  }).catch((e) => {if (e) throw e;})
+
+  const disabled = loader(" Installing Dependencies ");
+
+  await exec(
+    {
+      path: `${filesPath}/${appName}`,
+      cmd: [
+        "npm i -D @babel/core @babel/preset-env @babel/preset-react babel-loader copy-webpack-plugin css-loader file-loader html-webpack-plugin node-sass sass-loader source-map-loader style-loader webpack webpack-cli webpack-dev-server",
+        "npm i log-beautify orve root-require"
+      ]
+    }
+  ).catch((e) => { if (e) throw e;});
+
+  await disabled();
+
+  await exec({
+    path: `${filesPath}/${appName}`,
+    cmd: [
+      "mkdir public",
+      "mkdir src",
+      "mkdir src/assets",
+      "mkdir src/assets/font",
+      "mkdir src/component",
+      "mkdir src/component/button"
+    ]
+  }).catch((e) => { if (e) throw e;});
+  
+  console.clear();
+  logger(`--- ${chalk.bgWhite.bold(` Copy file from repository `)} ---`);
+
+  const pathArray = [
+    "webpack.config.js",
+    ".babelrc",
+    ".gitignore",
+
+    "public/index.html",
+    "public/favicon.ico",
+    "public/robots.txt",
+
+    "src/app.js",
+    "src/index.js",
+    "src/style.scss",
+    "src/assets/logo.png",
+    "src/assets/font/font.scss",
+    "src/assets/font/Montserrat-Italic-VariableFont_wght.ttf",
+    "src/assets/font/Montserrat-VariableFont_wght.ttf",
+    "src/component/button/button.js",
+    "src/component/button/button.sc.scss",
+    "src/component/helloword.js",
+    "src/component/img.js",
+  ];
+
+  for(let i = 0 ; i !== pathArray.length; i++) {
+    logger(`--- ${chalk.bgWhite.bold(` Downloading the file : ${chalk.bgYellow.bold(` ${pathArray[i]} `)}`)} ---`);
+    writeFileByURLs(filesPath, appName, pathArray[i]);
+  }
+}
+
+
 program
   .name("Orve-cli")
   .description('CLI to create template orve')
   .version(package.version)
 
 program.command("create")
+  .option("--vite", "VITE Template")
   .argument("<string>", "Name folder")
   .action(async (str, options) =>  {
+    const isVite = options.vite;
+
     const appName = str.toLowerCase();
     const filesPath = path.resolve("./");
     if (!pNameRegex.test(appName)) {
@@ -67,71 +206,13 @@ program.command("create")
     
     console.clear();
     logger(`--- ${chalk.bgWhite.bold(` Create ${chalk.bgYellow.bold('package.json')} File `)} ---`);
-
-    await exec({
-      path: `${filesPath}/${appName}`,
-      cmd: [
-        `npm init -y`,
-        `npm pkg set 'description'='Template Orve', 'main'='scr/index.js' 'scripts.dev'='webpack serve --mode development' 'scripts.build'='webpack --mode production'`,
-        `npm pkg delete 'scripts.test'`
-      ]
-    }).catch((e) => {if (e) throw e;})
     
-    const disabled = loader(" Installing Dependencies ");
-
-    await exec(
-      {
-        path: `${filesPath}/${appName}`,
-        cmd: [
-          "npm i -D @babel/core @babel/preset-env @babel/preset-react babel-loader copy-webpack-plugin css-loader file-loader html-webpack-plugin node-sass sass-loader source-map-loader style-loader webpack webpack-cli webpack-dev-server",
-          "npm i log-beautify orve root-require"
-        ]
-      }
-    ).catch((e) => { if (e) throw e;});
-
-    await disabled();
-    
-    await exec({
-      path: `${filesPath}/${appName}`,
-      cmd: [
-        "mkdir public",
-        "mkdir src",
-        "mkdir src/assets",
-        "mkdir src/assets/font",
-        "mkdir src/component",
-        "mkdir src/component/button"
-      ]
-    }).catch((e) => { if (e) throw e;});
-    
-    console.clear();
-    logger(`--- ${chalk.bgWhite.bold(` Copy file from repository `)} ---`);
-
-    const pathArray = [
-      "webpack.config.js",
-      ".babelrc",
-      ".gitignore",
-
-      "public/index.html",
-      "public/favicon.ico",
-      "public/robots.txt",
-
-      "src/app.js",
-      "src/index.js",
-      "src/style.scss",
-      "src/assets/logo.png",
-      "src/assets/font/font.scss",
-      "src/assets/font/Montserrat-Italic-VariableFont_wght.ttf",
-      "src/assets/font/Montserrat-VariableFont_wght.ttf",
-      "src/component/button/button.js",
-      "src/component/button/button.sc.scss",
-      "src/component/helloword.js",
-      "src/component/img.js",
-    ];
-
-    for(let i = 0 ; i !== pathArray.length; i++) {
-      logger(`--- ${chalk.bgWhite.bold(` Downloading the file : ${chalk.bgYellow.bold(` ${pathArray[i]} `)}`)} ---`);
-      writeFileByURLs(filesPath, appName, pathArray[i]);
+    if (isVite) {
+      await viteForm(filesPath, appName)
+    } else {
+      await webpackForm(filesPath, appName)
     }
+
     console.log(`
     \n
     --------------- ${chalk.bgGreen.bold(` Done `)}  ---------------

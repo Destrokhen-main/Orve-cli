@@ -4,7 +4,10 @@
   "description": "cli for create template orve",
   "main": "index.js",
   "scripts": {
-    "create": "node index.js create"
+    "index": "node index.js",
+    "create": "node index.js create",
+    "vite": "node index.js create asd --vite",
+    "web": "node index.js create asdf"
   },
   "keywords": [
     "orve",
